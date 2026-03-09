@@ -156,7 +156,7 @@ def validate(
     return total_loss / n, correct / n
 
 
-def run_training(model: nn.Module, config: TrainingConfig, device: torch.device):
+def run_training(model: nn.Module, config: TrainingConfig, device: torch.device) -> None:
     """
     Run the full training process with early stopping and LR scheduling.
 

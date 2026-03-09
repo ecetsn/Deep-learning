@@ -8,8 +8,13 @@ from mlp_model import MLP
 from train import run_training
 from test import run_test
 
-def set_seed(seed: int):
-    """Set seeds for reproducibility."""
+def set_seed(seed: int) -> None:
+    """
+    Set seeds for reproducibility.
+
+    Args:
+        seed (int): The seed value to use.
+    """
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -18,7 +23,7 @@ def set_seed(seed: int):
     torch.backends.cudnn.benchmark = False
 
 
-def main():
+def main() -> None:
     """Main entry point for the MNIST MLP classification."""
     model_config, training_config = get_configs()
 

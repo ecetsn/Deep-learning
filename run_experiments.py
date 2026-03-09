@@ -1,8 +1,17 @@
 import subprocess
 import os
 import json
+from typing import List
 
-def run_experiment(phase, name, args):
+def run_experiment(phase: str, name: str, args: List[str]) -> None:
+    """
+    Run a single experiment with given arguments and move results to correct directory.
+
+    Args:
+        phase (str): The phase name (e.g., 'phase1').
+        name (str): The name of the experiment.
+        args (List[str]): Additional command line arguments for main.py.
+    """
     print(f"\n>>> Phase: {phase} | Experiment: {name}")
     
     # Define paths for this experiment

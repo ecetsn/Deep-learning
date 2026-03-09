@@ -1,6 +1,6 @@
 import argparse
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 
 @dataclass
@@ -36,8 +36,13 @@ class TrainingConfig:
     lr_scheduler_step: int = 5
 
 
-def get_configs():
-    """Parse command line arguments and return ModelConfig and TrainingConfig objects."""
+def get_configs() -> Tuple[ModelConfig, TrainingConfig]:
+    """
+    Parse command line arguments and return ModelConfig and TrainingConfig objects.
+
+    Returns:
+        Tuple[ModelConfig, TrainingConfig]: Parsed model and training configurations.
+    """
     parser = argparse.ArgumentParser(description="CS515 HW1a: MNIST MLP Classification")
 
     # Mode and Device

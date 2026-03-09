@@ -70,9 +70,16 @@ class MLP(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Forward pass of the MLP.
+
+        Args:
+            x (torch.Tensor): Input tensor of shape (batch_size, 1, 28, 28) or similar.
+
+        Returns:
+            torch.Tensor: Output logits of shape (batch_size, num_classes).
         """
         x = self.flatten(x)
         for layer in self.layers:
             x = layer(x)
         x = self.output_layer(x)
         return x
+

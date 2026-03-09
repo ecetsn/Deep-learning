@@ -8,9 +8,14 @@ from parameters import TrainingConfig
 
 
 @torch.no_grad()
-def run_test(model: torch.nn.Module, config: TrainingConfig, device: torch.device):
+def run_test(model: torch.nn.Module, config: TrainingConfig, device: torch.device) -> None:
     """
     Test the model on the MNIST test set and report accuracy.
+
+    Args:
+        model (torch.nn.Module): The model to test.
+        config (TrainingConfig): Training configuration.
+        device (torch.device): Device to run on.
     """
     transform = transforms.Compose([
         transforms.ToTensor(),
