@@ -3,20 +3,13 @@ import ssl
 import numpy as np
 import torch
 
-from parameters import get_params
-from models.MLP import MLP
-from models.CNN import MNIST_CNN, SimpleCNN
-from models.VGG import VGG
-from models.ResNet import ResNet, BasicBlock
+from parameters import get_configs
+from mlp_model import MLP
 from train import run_training
-from test  import run_test
+from test import run_test
 
-
-# Fix for macOS SSL certificate verification error when downloading MNIST
-ssl._create_default_https_context = ssl._create_unverified_context
-
-
-def set_seed(seed):
+def set_seed(seed: int):
+    """Set seeds for reproducibility."""
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -25,61 +18,35 @@ def set_seed(seed):
     torch.backends.cudnn.benchmark = False
 
 
-def build_model(params):
-    model_name = params["model"]
-    dataset    = params["dataset"]
-    nc         = params["num_classes"]
-
-    if model_name == "mlp":
-        return MLP(
-            input_size   = params["input_size"],
-            hidden_sizes = params["hidden_sizes"],
-            num_classes  = nc,
-            dropout      = params["dropout"],
-        )
-
-    if model_name == "cnn":
-        # MNIST_CNN expects 1-channel 28×28; SimpleCNN expects 3-channel 32×32
-        if dataset == "mnist":
-            return MNIST_CNN(num_classes=nc)
-        else:
-            return SimpleCNN(num_classes=nc)
-
-    if model_name == "vgg":
-        if dataset == "mnist":
-            raise ValueError("VGG is designed for 3-channel images; use cifar10 with vgg.")
-        return VGG(dept=params["vgg_depth"], num_class=nc)
-
-    if model_name == "resnet":
-        if dataset == "mnist":
-            raise ValueError("ResNet is designed for 3-channel images; use cifar10 with resnet.")
-        return ResNet(BasicBlock, params["resnet_layers"], num_classes=nc)
-
-    raise ValueError(f"Unknown model: {model_name}")
-
-
 def main():
-    params = get_params()
+    """Main entry point for the MNIST MLP classification."""
+    model_config, training_config = get_configs()
 
-    set_seed(params["seed"])
-    print(f"Seed set to: {params['seed']}")
-    print(f"Dataset: {params['dataset']}  |  Model: {params['model']}")
-
+    set_seed(training_config.seed)
+    print(f"Seed set to: {training_config.seed}")
+    
     device = torch.device(
-        params["device"] if torch.cuda.is_available() else
-        "mps" if torch.backends.mps.is_available() else
+        training_config.device if torch.cuda.is_available() else 
+        "mps" if torch.backends.mps.is_available() else 
         "cpu"
     )
     print(f"Using device: {device}")
 
-    model = build_model(params).to(device)
+    # Build model
+    model = MLP(model_config).to(device)
     print(model)
 
-    if params["mode"] in ("train", "both"):
-        run_training(model, params, device)
+    # Counting parameters
+    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f"Total Trainable Parameters: {total_params:,}")
 
-    if params["mode"] in ("test", "both"):
-        run_test(model, params, device)
+    if training_config.mode in ("train", "both"):
+        print("\nStarting Training...")
+        run_training(model, training_config, device)
+
+    if training_config.mode in ("test", "both"):
+        print("\nStarting Testing...")
+        run_test(model, training_config, device)
 
 
 if __name__ == "__main__":

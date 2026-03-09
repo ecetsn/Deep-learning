@@ -1,4 +1,7 @@
+experiments/
 data/
 models/__pycache__/
 best_model.pth
 __pycache__/
+venv/
+images/
