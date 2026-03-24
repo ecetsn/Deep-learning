@@ -1,7 +1,6 @@
 data/
 models/__pycache__/
-best_model.pth
+experiments/20260324_033920_hw1b_suite
 __pycache__/
-best_mobilenet_v2.pth
-best_resnet18.pth
-best_vgg16.pth
+venv
+reports/
