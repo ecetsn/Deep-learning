@@ -3,4 +3,5 @@ models/__pycache__/
 experiments/20260324_033920_hw1b_suite
 __pycache__/
 venv
-reports/
+results/
+checkpoints/

@@ -11,51 +11,7 @@ class LambdaLayer(nn.Module):
         return self.lambd(x)
 
 class BasicBlock(nn.Module):
-    """
-    Basic residual block used in shallow ResNet architectures (e.g., ResNet-18, ResNet-34).
-
-    This block consists of two 3×3 convolutional layers with Batch Normalization
-    and ReLU activation. A residual (skip) connection adds the input tensor to
-    the output of the stacked convolutions.
-
-    If the spatial resolution or number of channels changes (due to stride > 1
-    or channel mismatch), a projection shortcut (typically a 1×1 convolution)
-    is applied to the input to match dimensions before addition.
-
-    Structure:
-        Conv3x3(in_channels → channels, stride)
-        BatchNorm
-        ReLU
-        Conv3x3(channels → channels, stride=1)
-        BatchNorm
-        Add shortcut
-        ReLU
-
-    Args:
-        in_channels (int):
-            Number of input channels.
-        channels (int):
-            Number of output channels produced by the block.
-        stride (int, optional):
-            Stride for the first convolution layer. Default is 1.
-        downsample (nn.Module, optional):
-            Optional module to match spatial or channel dimensions
-            for the residual connection.
-
-    Attributes:
-        expansion (int):
-            Expansion factor for output channels. For BasicBlock, expansion = 1.
-
-    Shape:
-        Input:
-            (N, in_channels, H, W)
-        Output:
-            (N, channels * expansion, H_out, W_out)
-
-        where:
-            H_out = H / stride
-            W_out = W / stride
-    """
+    """Basic residual block for ResNet-18/34."""
   
     expansion = 1 # For BasicBlock, output channels = channels * expansion = channels
     def __init__(self, in_channels, channels, stride=1,norm=nn.BatchNorm2d, option='B'):
@@ -91,58 +47,7 @@ class BasicBlock(nn.Module):
         return out
 
 class ResNet(nn.Module):
-    """
-    ResNet (Residual Network) implementation for image classification.
-
-    This class builds a ResNet architecture using either BasicBlock or Bottleneck
-    residual blocks. The network consists of an initial convolution and
-    normalization, followed by four residual layers, global average pooling,
-    and a final fully connected layer for classification.
-
-    Args:
-    -----
-        block (nn.Module):
-            Residual block class to use (BasicBlock or Bottleneck).
-        num_blocks (list of int):
-            Number of blocks in each of the four layers.
-            Example: [2, 2, 2, 2] for ResNet-18.
-        norm (nn.Module, optional):
-            Normalization layer to use after convolutions. Default: nn.BatchNorm2d.
-        num_classes (int, optional):
-            Number of output classes for classification. Default: 10.
-
-    Attributes:
-    -----------
-        in_channels (int):
-            Number of input channels for the next block; updated after each layer.
-        conv1 (nn.Conv2d):
-            Initial convolution layer (3×3 kernel).
-        bn1 (nn.Module):
-            Normalization after conv1.
-        layer1, layer2, layer3, layer4 (nn.Sequential):
-            Residual layers composed of the specified block type.
-        avgpool (nn.AdaptiveAvgPool2d):
-            Global average pooling layer reducing spatial dimensions to 1×1.
-        linear (nn.Linear):
-            Fully connected layer mapping features to `num_classes`.
-
-    Shape:
-        Input:
-            (N, 3, H, W) where H and W are image height and width.
-        Output:
-            (N, num_classes) — class logits for each input sample.
-
-    Example:
-        >>> model = ResNet(BasicBlock, [2, 2, 2, 2], num_classes=10)
-        >>> x = torch.randn(8, 3, 32, 32)
-        >>> logits = model(x)
-
-    References:
-    ----------
-    [1] He, K., Zhang, X., Ren, S., & Sun, J. (2016). Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 770-778).
-    [2] https://github.com/KaimingHe/deep-residual-networks
-    
-    """
+    """ResNet implementation for CIFAR-10 classification."""
     def __init__(self, block, num_blocks, norm=nn.BatchNorm2d, num_classes=10):
         super(ResNet, self).__init__()
         self.in_channels = 64
